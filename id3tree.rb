@@ -1,9 +1,11 @@
-class id3tree
-  def initialize
-    
+class ID3Tree
+  def initialize (data, attributes)
+    @tree = {}
+    @attributes = attributes
+    @data = data
   end
 
-  def hello_world
+  def hello
     puts "hello world"
   end 
 end
