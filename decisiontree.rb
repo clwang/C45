@@ -1,3 +1,6 @@
+# CPSC 531 - ID3 Algorithm using the Car Evaluation Data Set from UCI Repository
+# @Authors : Charles Wang   &   Jisu Ha
+
 require "id3tree.rb"
 
 
@@ -37,5 +40,5 @@ foo = split_data(fixed_data, test_data, training_data)
 training_data = foo[0]
 test_data = foo[1]
 
-test = ID3Tree.new
+test = DTree::ID3Tree.new(training_data, attributes)
 test.hello
