@@ -14,10 +14,6 @@ module DTree
       @data = data
     end
 
-    def discrete_train
-  
-    end
-
     def hello
       puts "hello world"
     end 

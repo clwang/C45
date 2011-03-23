@@ -30,11 +30,14 @@ file_name = gets.chomp
 data = File.open(File.expand_path("test_data/" + file_name))
 
 #convert the data from a string into an array
-data.each do |item|
-  item = item.chomp
-  row = item.split(",")
-  fixed_data.push(row)
+data.each_line do |item|
+  row = item.strip.split(",")
+  if !(row.last.eql?("vgood") || row.last.eql?("good"))
+    fixed_data.push(row)
+  end
 end
+
+puts fixed_data.count
 
 foo = split_data(fixed_data, test_data, training_data)
 training_data = foo[0]
