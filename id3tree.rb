@@ -39,9 +39,13 @@ module DTree
     def get_information_gain(data, attributes, attribute)
       # grab all the possible values for the attribute passed into this function
       values = data.collect { |d| d[attributes.index(attribute)] }.uniq.sort
+      
       # find all the possible matches for each value and store it in an array
       partitions = values.collect { |v| data.select { |d| d[attributes.index(attribute)].eql?(v) } }
+      
+      # calculate the entropy of all the attributes minus the total entropy of the data
       remainder = partitions.collect { |p| (p.size.to_f / data.size) * p.classification.calculate_entropy }.inject(0) {|result,element| element+=result }
+      
       # return the array with the information gain and the index of the attribute name
       [data.classification.calculate_entropy - remainder, attributes.index(attribute)]
     end
@@ -56,10 +60,13 @@ module DTree
 
       # Calculate the attribute that has the highest information gain and create a node
       total_gain = attributes.collect { |attribute| get_information_gain(data, attributes, attribute) }
+      
       # find the highest information gain from the returned result
       highest_gain = total_gain.max { |a,b| a[0] <=> b[0] }
+      
       # store the results in a node
       node = Node.new(attributes[total_gain.index(highest_gain)], highest_gain[1], highest_gain[0])
+      
       # add the attribute to the used list so that way we don't use it again in our calculations down the tree
       @attr_list.has_key?(node.attribute) ? @attr_list[node.attribute] += [node.threshold] : @attr_list[node.attribute] = [node.threshold]
       tree = { node => {} }
@@ -67,12 +74,10 @@ module DTree
       # check to see if we need to recursively go further down the tree by taking the exisiting node 
       # and seeing if the entropy of its attributes is either 1 or 0
       values = data.collect { |d| d[attributes.index(node.attribute)] }.uniq.sort
-      puts values.inspect
       partitions = values.collect { |v| data.select { |d| d[attributes.index(node.attribute)].eql?(v) } }
       partitions.each_with_index { |items, index|
         tree[node][values[index]] = train(items, attributes-[values[index]])
       }
-      puts tree
       tree
     end
     
@@ -83,6 +88,7 @@ module DTree
   private
     def traverse_tree(tree, data)
       attr = tree.to_a.first
+      # we traverse down the tree by comparing the attributes of the test data and the tree and traverse down the tree to get a result
       return attr[1][data[@attributes.index(attr[0].attribute)]] if !attr[1][data[@attributes.index(attr[0].attribute)]].is_a?(Hash)
       return traverse_tree(attr[1][data[@attributes.index(attr[0].attribute)]],data)
     end
