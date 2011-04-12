@@ -2,7 +2,7 @@
 class Array
   def calculate_entropy
     # entropy calculation is done using the following algorithm
-    # Entropy(acc, unacc) = - acc / (acc + unacc) * logbase2(acc/(acc+unacc)) - unacc / (acc + unacc) * logbase2(unacc/(acc+unacc))
+    # Entropy(acc, unacc) = - acc / (acc + unacc) * logbase2(acc/(acc+unacc)) - unacc / (acc + unacc) * logbase2(unacc/(acc+unacc)) - ....
     return 0 if empty?
     classification = {} 
     counter = 0
@@ -13,6 +13,7 @@ class Array
     each { |foo| classification[foo] = !classification[foo] ? 1 : (classification[foo] + 1); counter += 1 }
     classification.each do | key, value |
       # sums the entropy of all the attributes of a classification
+      # we have to use a conversion method for the log since the algorithm uses log base 2, and the computer only knows log base 10
       result += -value.to_f/counter*Math.log(value.to_f/counter)/Math.log(2.0)
     end
     result
@@ -83,7 +84,7 @@ module DTree
     def traverse_tree(tree, data)
       attr = tree.to_a.first
       return attr[1][data[@attributes.index(attr[0].attribute)]] if !attr[1][data[@attributes.index(attr[0].attribute)]].is_a?(Hash)
-      return traverse_tree(attr[1][test[@attributes.index(attr[0].attribute)]],data)
+      return traverse_tree(attr[1][data[@attributes.index(attr[0].attribute)]],data)
     end
   end
 end

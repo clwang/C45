@@ -22,6 +22,29 @@ def split_data(data, test_data, training_data)
   return training_data, test_data
 end
 
+def print_output(dtree, test_data)
+  print "Input a filename for the results: "
+  output_name = gets.chomp
+  total = 0
+  matches = 0
+  File.open(File.expand_path("results/" + output_name), 'w+') do |f|
+    test_data.each { |data| 
+      predict = dtree.predict(data)
+      actual = data.last
+      total += 1
+      matches += 1 if predict == actual
+      if predict == actual
+        match = true
+      else
+        match = false
+      end
+      f.puts "Predicted: #{predict}   |    Actual: #{actual}    |  Match: #{match}"  
+    }
+    f.puts "------------------------------------------------------------------------"
+    f.puts "Accuracy: #{(matches.to_f/total.to_f)*100}%"
+  end
+end
+
 attributes = ["buying", "maint", "doors", "persons", "lug_boot", "safety"]
 training_data, test_data, fixed_data = [],[],[]
 
@@ -40,11 +63,8 @@ end
 foo = split_data(fixed_data, test_data, training_data)
 training_data = foo[0]
 test_data = foo[1]
-puts training_data.inspect
-test = DTree::ID3Tree.new(training_data, attributes)
-test.begin
 
-sample_data = %w(vhigh vhigh 2 2 med low unacc)
-result = test.predict(sample_data)
-puts "Prediction: #{result}"
-puts "Actual: unacc"
+id3_tree = DTree::ID3Tree.new(training_data, attributes)
+id3_tree.begin
+
+print_output(id3_tree,test_data)

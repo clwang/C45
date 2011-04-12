@@ -1,0 +1,10 @@
+Predicted: unacc   |    Actual: unacc    |  Match: true
+Predicted: unacc   |    Actual: unacc    |  Match: true
+Predicted: unacc   |    Actual: unacc    |  Match: true
+Predicted: unacc   |    Actual: unacc    |  Match: true
+Predicted: unacc   |    Actual: acc    |  Match: false
+Predicted: unacc   |    Actual: acc    |  Match: false
+Predicted: unacc   |    Actual: acc    |  Match: false
+Predicted: unacc   |    Actual: unacc    |  Match: true
+------------------------------------------------------------------------
+Accuracy: 62.5%
