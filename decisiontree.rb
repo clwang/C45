@@ -37,11 +37,9 @@ data.each_line do |item|
   end
 end
 
-puts fixed_data.count
-
 foo = split_data(fixed_data, test_data, training_data)
 training_data = foo[0]
 test_data = foo[1]
 
 test = DTree::ID3Tree.new(training_data, attributes)
-test.hello
+test.begin
