@@ -64,7 +64,14 @@ module DTree
       
       # check to see if we need to recursively go further down the tree by taking the exisiting node 
       # and seeing if the entropy of its attributes is either 1 or 0
+      values = data.collect { |d| d[attributes.index(node.attribute)] }.uniq.sort
+      partitions = values.collect { |v| data.select { |d| d[attributes.index(node.attribute)].eql?(v) } }
+      partitions.each_with_index { |examples, i|
+        tree[node][values[i]] = train(examples, attributes-[values[i]])
+      }
       
+      tree
+      puts tree.inspect
     end
   end
 end
