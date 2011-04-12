@@ -5,6 +5,7 @@ class Array
     # Entropy(acc, unacc) = - acc / (acc + unacc) * logbase2(acc/(acc+unacc)) - unacc / (acc + unacc) * logbase2(unacc/(acc+unacc))
     classification = {} 
     counter = 0
+    result = 0
     # iterate through all classifications, in our case acceptable and unaccepatable
     # initially the hash is empty, the first instance will set the key and increase the value of the classification for each instance found
     # the counter will count the total, which will be the ( acc + unacc of our equation )
@@ -23,12 +24,14 @@ class Array
 end
 
 module DTree
+  Node = Struct.new(:attribute, :gain)
 
   class ID3Tree
     def initialize (data, attributes)
       @tree = {}
       @attributes = attributes
       @data = data
+      @attr_list = {}
     end
     
     def get_information_gain(data, attributes, attribute)
@@ -37,6 +40,8 @@ module DTree
       # find all the possible matches for each value and store it in an array
       partitions = values.collect { |v| data.select { |d| d[attributes.index(attribute)].eql?(v) } }
       remainder = partitions.collect { |p| (p.size.to_f / data.size) * p.classification.calculate_entropy }.inject(0) {|result,element| element+=result }
+      # return the array with the information gain and the index of the attribute name
+      [data.classification.calculate_entropy - remainder, attributes.index(attribute)]
     end
     
     def begin
@@ -49,6 +54,17 @@ module DTree
 
       # Calculate the attribute that has the highest information gain and create a node
       total_gain = attributes.collect { |attribute| get_information_gain(data, attributes, attribute) }
+      # find the highest information gain from the returned result
+      highest_gain = total_gain.max { |a,b| a[0] <=> b[0] }
+      # store the results in a node
+      node = Node.new(attributes[total_gain.index(highest_gain)], highest_gain[1])
+      # add the attribute to the used list so that way we don't use it again in our calculations down the tree
+      @attr_list.has_key?(node.attribute) ? @attr_list[node.attribute] += [node.threshold] : @attr_list[node.attribute] = [node.threshold]
+      @tree = { node => {} }
+      
+      # check to see if we need to recursively go further down the tree by taking the exisiting node 
+      # and seeing if the entropy of its attributes is either 1 or 0
+      
     end
   end
 end
