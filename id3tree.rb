@@ -10,9 +10,10 @@ class Array
     # the counter will count the total, which will be the ( acc + unacc of our equation )
     each { |foo| classification[foo] = !classification[foo] ? 1 : (classification[foo] + 1); counter += 1 }
     classification.each do | key, value |
-      puts key
-      puts value
+      # sums the entropy of all the attributes of a classification
+      result += -value.to_f/counter*Math.log(value.to_f/counter)/Math.log(2.0)
     end
+    return result
   end
   
   def classification
@@ -28,7 +29,6 @@ module DTree
       @tree = {}
       @attributes = attributes
       @data = data
-      puts @data.count
     end
     
     def get_information_gain(data, attributes, attribute)
@@ -36,7 +36,6 @@ module DTree
       values = data.collect { |d| d[attributes.index(attribute)] }.uniq.sort
       # find all the possible matches for each value and store it in an array
       partitions = values.collect { |v| data.select { |d| d[attributes.index(attribute)].eql?(v) } }
-      puts partitions.inspect
       remainder = partitions.collect { |p| (p.size.to_f / data.size) * p.classification.calculate_entropy }.inject(0) {|result,element| element+=result }
     end
     
