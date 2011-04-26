@@ -60,12 +60,12 @@ module DTree
     
     def begin(data=@data, attributes = @attributes)
       initialize(data, attributes)
-      attr_used = []
-      @tree = train(@data, @attributes, @default, attr_used)
+      @tree = train(@data, @attributes, @default)
     end
     
-    def train(data, attributes, default, used)
-
+    def train(data, attributes, default)
+      puts attributes.inspect
+      puts default
       # if the data set is empty then return the default expected value
       return default if data.empty?
       
@@ -84,10 +84,6 @@ module DTree
       # store the results in a node
       node = Node.new(attributes[total_gain.index(highest_gain)], highest_gain[1], highest_gain[0])
       
-      # add the attribute to the used list so that way we don't use it again in our calculations down the tree
-      # attributes - { A }
-      used.push(node[:attribute]) if !used.include? node[:attribute]
-
       tree = { node => {} }
       
       # get possible values of the current node (vi)
@@ -98,8 +94,9 @@ module DTree
       
       # for each partition of data, we will recursively repeat the id3 training algorithm and finally return the tree
       partitions.each_with_index { |items, index|
-        unused_attributes = attributes.select { |a| !used.include?(a)  }
-        tree[node][values[index]] = train(items, unused_attributes, items.classification.most_common, used)
+        # attributes - { A }
+        unused_attributes = attributes.select { |a| a != node[:attribute]  }
+        tree[node][values[index]] = train(items, unused_attributes, items.classification.most_common)
       }
       tree
     end

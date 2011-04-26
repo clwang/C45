@@ -4,10 +4,10 @@
 require "id3tree.rb"
 
 
-# The Split data method will randomly split the data 80/20 ratio
+# The Split data method will randomly split the data 70/30 ratio
 def split_data(data, test_data, training_data)
   size = data.count
-  train_size = (size * 0.90).round
+  train_size = (size * 0.70).round
   test_size = size - train_size
   data = data.shuffle
   counter = 0
@@ -110,9 +110,7 @@ data = File.open(File.expand_path("test_data/" + file_name))
 #convert the data from a string into an array
 data.each_line do |item|
   row = item.strip.split(",")
-  if !(row.last.eql?("vgood") || row.last.eql?("good"))
-    fixed_data.push(row)
-  end
+  fixed_data.push(row)
 end
 
 foo = split_data(fixed_data, test_data, training_data)
