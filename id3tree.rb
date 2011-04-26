@@ -64,8 +64,6 @@ module DTree
     end
     
     def train(data, attributes, default)
-      puts attributes.inspect
-      puts default
       # if the data set is empty then return the default expected value
       return default if data.empty?
       
@@ -105,8 +103,11 @@ module DTree
       return traverse_tree(@tree, test_data)
     end
     
-    def graph(filename) 
+    def graph(filename)
+      # we will initialize the Dot Graph Printer from http://rockit.sourceforge.net/subprojects/graphr/ 
       dgp = DotGraphPrinter.new(build_tree)
+      # set the size of the image (70 is used for large scale graphs)
+      dgp.size = 70
       dgp.write_to_file("#{filename}.png", "png")
     end
   
@@ -129,17 +130,20 @@ module DTree
       attr = tree.to_a.first
       # iterate through all the possible values of that node
       links = attr[1].keys.collect do |key|
-        parent_text = "#{attr[0].attribute}"
+        parent_text = "#{attr[0].attribute}\n(#{attr[0].object_id})"
         # if the node points to another attr node then set its text
         if attr[1][key].is_a?(Hash) then
           child = attr[1][key].to_a.first[0]
-          child_text = "#{child.attribute}"
+          child_text = "#{child.attribute}\n(#{child.object_id})"
         else
           child = attr[1][key]
-          child_text = "#{child}"
+          child_text = "#{child}\n(#{child.to_s.clone.object_id})"
         end
         label_text = "#{key}"
-
+        
+        # first index is the parent node aka main node
+        # the second index is what the main node will point to (our node must be unique so we ID it)
+        # the third index is the edge label aka the line that connects the nodes
         [parent_text, child_text, label_text]
       end
       # we will recursively build the tree by linking all the nodes
