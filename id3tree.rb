@@ -34,7 +34,7 @@ class Array
 end
 
 module DTree
-  Node = Struct.new(:attribute, :threshold, :gain)
+  Node = Struct.new(:attribute, :gain)
 
   class ID3Tree
     def initialize (data, attributes)
@@ -80,21 +80,20 @@ module DTree
       highest_gain = total_gain.max { |a,b| a[0] <=> b[0] }
       
       # store the results in a node
-      node = Node.new(attributes[total_gain.index(highest_gain)], highest_gain[1], highest_gain[0])
+      node = Node.new(attributes[total_gain.index(highest_gain)], highest_gain[0])
       
       tree = { node => {} }
-      
+
       # get possible values of the current node (vi)
       values = data.collect { |d| d[attributes.index(node.attribute)] }.uniq.sort
-      
+
       # partition the data of each set based on the values
       partitions = values.collect { |v| data.select { |d| d[attributes.index(node.attribute)] == v } }
       
       # for each partition of data, we will recursively repeat the id3 training algorithm and finally return the tree
       partitions.each_with_index { |items, index|
-        # attributes - { A }
-        unused_attributes = attributes.select { |a| a != node[:attribute]  }
-        tree[node][values[index]] = train(items, unused_attributes, items.classification.most_common)
+        # pass in the attributes - { A }, since we want to remove its parent node from the attributes list when recursing
+        tree[node][values[index]] = train(items, attributes-[values[index]], items.classification.most_common)
       }
       tree
     end
@@ -107,7 +106,7 @@ module DTree
       # we will initialize the Dot Graph Printer from http://rockit.sourceforge.net/subprojects/graphr/ 
       dgp = DotGraphPrinter.new(build_tree)
       # set the size of the image (70 is used for large scale graphs)
-      dgp.size = 70
+      dgp.size = 300
       dgp.write_to_file("#{filename}.png", "png")
     end
   
