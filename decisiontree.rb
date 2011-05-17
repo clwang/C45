@@ -7,7 +7,7 @@ require "id3tree.rb"
 # The Split data method will randomly split the data 70/30 ratio
 def split_data(data, test_data, training_data)
   size = data.count
-  train_size = (size * 0.90).round
+  train_size = (size * 0.70).round
   test_size = size - train_size
   data = data.shuffle
   counter = 0
